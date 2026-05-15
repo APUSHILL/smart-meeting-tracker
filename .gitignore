@@ -16,8 +16,7 @@ frontend/.angular/
 .vscode/
 *.class
 
-# Env / secrets
-backend/src/main/resources/application.properties
+# application.properties uses ${VAR:default} syntax — safe to commit, no raw secrets
 
 # OS
 .DS_Store
