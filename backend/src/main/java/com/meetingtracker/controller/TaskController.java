@@ -1,11 +1,14 @@
 package com.meetingtracker.controller;
 
 import com.meetingtracker.dto.TaskRequest;
+import com.meetingtracker.entity.TaskStatus;
 import com.meetingtracker.dto.TaskResponse;
 import com.meetingtracker.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,12 +50,19 @@ public class TaskController {
     }
 
     @GetMapping("/overdue")
-    public ResponseEntity<List<TaskResponse>> getOverdueTasks() {
-        return ResponseEntity.ok(taskService.getOverdueTasks());
+    public ResponseEntity<List<TaskResponse>> getOverdueTasks(@AuthenticationPrincipal UserDetails user) {
+        return ResponseEntity.ok(taskService.getOverdueTasks(user.getUsername()));
     }
 
     @GetMapping("/today")
-    public ResponseEntity<List<TaskResponse>> getTodaysTasks() {
-        return ResponseEntity.ok(taskService.getTodaysTasks());
+    public ResponseEntity<List<TaskResponse>> getTodaysTasks(@AuthenticationPrincipal UserDetails user) {
+        return ResponseEntity.ok(taskService.getTodaysTasks(user.getUsername()));
+    }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<TaskResponse>> getTasksByStatus(
+            @PathVariable TaskStatus status,
+            @AuthenticationPrincipal UserDetails user) {
+        return ResponseEntity.ok(taskService.getTasksByStatus(status, user.getUsername()));
     }
 }

@@ -25,6 +25,9 @@ public class Meeting {
     @Column(name = "attendees", columnDefinition = "TEXT")
     private String attendees;
 
+    @Column(name = "created_by", nullable = false)
+    private String createdBy;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -53,6 +56,9 @@ public class Meeting {
 
     public String getAttendees() { return attendees; }
     public void setAttendees(String attendees) { this.attendees = attendees; }
+
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 

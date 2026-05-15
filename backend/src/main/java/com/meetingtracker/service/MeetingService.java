@@ -21,29 +21,30 @@ public class MeetingService {
         this.meetingRepository = meetingRepository;
     }
 
-    public MeetingResponse createMeeting(MeetingRequest request) {
+    public MeetingResponse createMeeting(MeetingRequest request, String username) {
         Meeting meeting = new Meeting();
         meeting.setTitle(request.getTitle());
         meeting.setDescription(request.getDescription());
         meeting.setMeetingTime(request.getMeetingTime());
         meeting.setAttendees(toCommaSeparated(request.getAttendees()));
+        meeting.setCreatedBy(username);
         return toResponse(meetingRepository.save(meeting));
     }
 
-    public List<MeetingResponse> getAllMeetings() {
-        return meetingRepository.findAll().stream()
+    public List<MeetingResponse> getAllMeetings(String username) {
+        return meetingRepository.findByCreatedBy(username).stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
 
-    public MeetingResponse getMeetingById(Long id) {
-        Meeting meeting = meetingRepository.findById(id)
+    public MeetingResponse getMeetingById(Long id, String username) {
+        Meeting meeting = meetingRepository.findByIdAndCreatedBy(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("Meeting not found with id: " + id));
         return toResponse(meeting);
     }
 
-    public MeetingResponse updateMeeting(Long id, MeetingRequest request) {
-        Meeting meeting = meetingRepository.findById(id)
+    public MeetingResponse updateMeeting(Long id, MeetingRequest request, String username) {
+        Meeting meeting = meetingRepository.findByIdAndCreatedBy(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("Meeting not found with id: " + id));
         meeting.setTitle(request.getTitle());
         meeting.setDescription(request.getDescription());
@@ -52,15 +53,14 @@ public class MeetingService {
         return toResponse(meetingRepository.save(meeting));
     }
 
-    public void deleteMeeting(Long id) {
-        if (!meetingRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Meeting not found with id: " + id);
-        }
-        meetingRepository.deleteById(id);
+    public void deleteMeeting(Long id, String username) {
+        Meeting meeting = meetingRepository.findByIdAndCreatedBy(id, username)
+                .orElseThrow(() -> new ResourceNotFoundException("Meeting not found with id: " + id));
+        meetingRepository.delete(meeting);
     }
 
-    public long countMeetings() {
-        return meetingRepository.count();
+    public long countMeetings(String username) {
+        return meetingRepository.countByCreatedBy(username);
     }
 
     private String toCommaSeparated(List<String> list) {

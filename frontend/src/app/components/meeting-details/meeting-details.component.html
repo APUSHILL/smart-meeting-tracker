@@ -6,23 +6,32 @@
 
   <!-- ── VIEW MODE header ── -->
   @if (!editMode) {
-    <div class="header-row">
-      <a mat-icon-button routerLink="/meetings"><mat-icon>arrow_back</mat-icon></a>
-      <div class="header-info">
+    <div class="page-hero">
+      <a mat-icon-button routerLink="/meetings" class="back-btn"><mat-icon>arrow_back</mat-icon></a>
+      <div class="page-hero-icon">
+        <mat-icon>event_note</mat-icon>
+      </div>
+      <div class="page-hero-text">
         <h1>{{ meeting.title }}</h1>
-        <p class="subtitle">
+        <p class="page-subtitle">
           <mat-icon class="inline-icon">schedule</mat-icon>
           {{ meeting.meetingTime ? (meeting.meetingTime | date:'medium') : 'No date set' }}
           @if (meeting.meetingTime) {
-            <span class="status-badge" [class.upcoming]="isMeetingUpcoming()" [class.past]="!isMeetingUpcoming()">
+            <span class="status-pill" [class.upcoming]="isMeetingUpcoming()" [class.past]="!isMeetingUpcoming()">
               {{ isMeetingUpcoming() ? 'Upcoming' : 'Past' }}
             </span>
           }
         </p>
       </div>
-      <button mat-stroked-button color="primary" class="edit-btn" (click)="enterEditMode()">
-        <mat-icon>edit</mat-icon> Edit
-      </button>
+      <div class="hero-actions">
+        <button mat-stroked-button class="edit-btn-hero" (click)="enterEditMode()">
+          <mat-icon>edit</mat-icon> Edit
+        </button>
+        <button class="calendar-btn" (click)="addToCalendar()" title="Add to Calendar">
+          <mat-icon class="cal-icon">event</mat-icon>
+          Add to Calendar
+        </button>
+      </div>
     </div>
 
     @if (meeting.description) {
@@ -162,7 +171,7 @@
                 <mat-option value="LOW">⚪ Low</mat-option>
               </mat-select>
             </mat-form-field>
-            <button mat-raised-button color="primary" type="submit"
+            <button mat-raised-button class="add-task-btn" type="submit"
                     [disabled]="taskForm.invalid || addingTask">
               <mat-icon>add</mat-icon>
             </button>
@@ -182,13 +191,14 @@
           <mat-card-content class="task-content">
             <div class="task-info">
               <div class="task-title-row">
-                <span class="priority-dot" [class]="'priority-' + (task.priority ?? 'MEDIUM') | lowercase"
-                      [title]="(task.priority ?? 'MEDIUM') + ' priority'"></span>
+                <span class="priority-badge" [class]="'p-' + (task.priority ?? 'MEDIUM') | lowercase">
+                  <mat-icon class="p-icon">
+                    {{ (task.priority ?? 'MEDIUM') === 'HIGH' ? 'keyboard_double_arrow_up' : (task.priority ?? 'MEDIUM') === 'MEDIUM' ? 'remove' : 'keyboard_double_arrow_down' }}
+                  </mat-icon>
+                  {{ task.priority ?? 'MEDIUM' }}
+                </span>
                 <span class="task-title" [class.strikethrough]="task.status === 'COMPLETED'">
                   {{ task.title }}
-                </span>
-                <span class="priority-badge" [class]="'p-' + (task.priority ?? 'MEDIUM') | lowercase">
-                  {{ task.priority ?? 'MEDIUM' }}
                 </span>
               </div>
               @if (task.deadline) {
@@ -210,9 +220,9 @@
                   <mat-icon>undo</mat-icon>
                 </button>
               }
-              <mat-chip [color]="task.status === 'COMPLETED' ? 'primary' : 'warn'" selected>
+              <span class="status-chip" [class.chip-completed]="task.status === 'COMPLETED'" [class.chip-pending]="task.status === 'PENDING'">
                 {{ task.status }}
-              </mat-chip>
+              </span>
             </div>
           </mat-card-content>
         </mat-card>
@@ -222,8 +232,8 @@
     <section>
       <div class="section-header">
         <h2><mat-icon>notes</mat-icon> Notes</h2>
-        <button mat-stroked-button color="accent" (click)="analyzeWithAi()" [disabled]="isAnalyzing">
-          <mat-icon>auto_awesome</mat-icon>
+        <button class="ai-btn" (click)="analyzeWithAi()" [disabled]="isAnalyzing">
+          <mat-icon class="ai-btn-icon">{{ isAnalyzing ? 'hourglass_top' : 'auto_awesome' }}</mat-icon>
           {{ isAnalyzing ? 'Analyzing...' : 'Summarize & Extract Tasks' }}
         </button>
       </div>
@@ -236,7 +246,7 @@
               <textarea matInput formControlName="content" rows="3"
                         placeholder="Write your meeting note here..."></textarea>
             </mat-form-field>
-            <button mat-raised-button color="accent" type="submit"
+            <button mat-raised-button class="add-note-btn" type="submit"
                     [disabled]="noteForm.invalid || addingNote">
               Add Note
             </button>

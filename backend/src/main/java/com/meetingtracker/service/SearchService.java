@@ -39,8 +39,8 @@ public class SearchService {
         this.objectMapper = new ObjectMapper();
     }
 
-    public List<MeetingResponse> search(String query) {
-        List<Meeting> allMeetings = meetingRepository.findAll();
+    public List<MeetingResponse> search(String query, String username) {
+        List<Meeting> allMeetings = meetingRepository.findByCreatedBy(username);
         if (allMeetings.isEmpty()) return List.of();
 
         String meetingsJson = buildMeetingsJson(allMeetings);

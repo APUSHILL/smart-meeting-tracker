@@ -30,6 +30,10 @@ export class TaskService {
     return this.http.get<Task[]>(`${this.url}/meeting/${meetingId}`);
   }
 
+  getByStatus(status: 'PENDING' | 'COMPLETED'): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.url}/status/${status}`);
+  }
+
   getOverdue(): Observable<Task[]> {
     return this.http.get<Task[]>(`${this.url}/overdue`);
   }

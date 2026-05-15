@@ -1,38 +1,57 @@
 html, body {
   height: 100%;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-
-  /* Soft blue-grey background — easy on the eyes, not pure white */
-  background: #eef2f7;
-  color: #1e2a3a;
+  font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(145deg, #f0f7ff 0%, #e8f4fd 30%, #f5f9ff 60%, #eaf5fb 100%);
+  background-attachment: fixed;
+  color: #0f172a;
+  min-height: 100vh;
 }
 
 * { box-sizing: border-box; }
 
-/* Cards sit on the background with a warm white, subtle shadow */
+/* ── Global card style ── */
 mat-card {
-  border-radius: 10px !important;
+  border-radius: 12px !important;
   background: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(30, 42, 58, 0.08) !important;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.07), 0 2px 10px rgba(15, 23, 42, 0.05) !important;
+  border: 1px solid #e8edf5 !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 mat-card:hover {
-  box-shadow: 0 4px 16px rgba(30, 42, 58, 0.13) !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.11) !important;
 }
 
-/* Page titles */
+/* ── Headings ── */
 h1 {
-  color: #1e2a3a;
-  font-weight: 600;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.4px;
+  margin: 0;
 }
 
 h2 {
-  color: #2c3e55;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: -0.2px;
 }
 
-/* Scrollbar — subtle and modern */
-::-webkit-scrollbar { width: 7px; }
-::-webkit-scrollbar-track { background: #eef2f7; }
-::-webkit-scrollbar-thumb { background: #b0bec5; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #78909c; }
+/* ── Angular Material primary button ── */
+.mat-mdc-raised-button.mat-primary {
+  background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.35) !important;
+}
+
+.mat-mdc-raised-button.mat-primary:hover {
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.45) !important;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #e8f4fd; }
+::-webkit-scrollbar-thumb { background: #bcd9f0; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #7ab8de; }

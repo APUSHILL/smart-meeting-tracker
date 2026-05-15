@@ -70,24 +70,30 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    public List<TaskResponse> getOverdueTasks() {
-        return taskRepository.findByDeadlineBeforeAndStatus(LocalDate.now(), TaskStatus.PENDING).stream()
+    public List<TaskResponse> getOverdueTasks(String username) {
+        return taskRepository.findByMeetingCreatedByAndDeadlineBeforeAndStatus(username, LocalDate.now(), TaskStatus.PENDING).stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
 
-    public List<TaskResponse> getTodaysTasks() {
-        return taskRepository.findByDeadline(LocalDate.now()).stream()
+    public List<TaskResponse> getTodaysTasks(String username) {
+        return taskRepository.findByMeetingCreatedByAndDeadline(username, LocalDate.now()).stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
 
-    public long countByStatus(TaskStatus status) {
-        return taskRepository.countByStatus(status);
+    public List<TaskResponse> getTasksByStatus(TaskStatus status, String username) {
+        return taskRepository.findByMeetingCreatedByAndStatus(username, status).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
-    public long countOverdue() {
-        return taskRepository.countByDeadlineBeforeAndStatus(LocalDate.now(), TaskStatus.PENDING);
+    public long countByStatus(TaskStatus status, String username) {
+        return taskRepository.countByMeetingCreatedByAndStatus(username, status);
+    }
+
+    public long countOverdue(String username) {
+        return taskRepository.countByMeetingCreatedByAndDeadlineBeforeAndStatus(username, LocalDate.now(), TaskStatus.PENDING);
     }
 
     private TaskResponse toResponse(Task task) {

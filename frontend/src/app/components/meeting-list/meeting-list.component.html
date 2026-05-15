@@ -1,5 +1,6 @@
-<div class="page-header">
-  <div>
+<div class="page-hero">
+  <div class="page-hero-icon"><mat-icon>meeting_room</mat-icon></div>
+  <div class="page-hero-text">
     <h1>Meetings</h1>
     <p class="page-subtitle">Manage and track all your meetings</p>
   </div>
@@ -10,21 +11,26 @@
 
 <!-- Search & Filter bar -->
 <div class="filter-bar">
-  <mat-form-field appearance="outline" class="search-field">
-    <mat-label>Search meetings</mat-label>
-    <mat-icon matPrefix>auto_awesome</mat-icon>
-    <input matInput [(ngModel)]="searchQuery"
+  <div class="search-wrapper">
+    <mat-icon class="search-prefix-icon">auto_awesome</mat-icon>
+    <input class="search-input"
+           [(ngModel)]="searchQuery"
            (ngModelChange)="onSearchChange($event)"
-           placeholder="Ask anything: 'budget discussions', 'John's tasks'...">
-    @if (isSearching) {
-      <mat-spinner matSuffix diameter="18" style="margin-right:8px"></mat-spinner>
-    } @else if (searchQuery) {
-      <button matSuffix mat-icon-button (click)="clearSearch()">
-        <mat-icon>close</mat-icon>
-      </button>
-    }
-    <mat-hint>AI-powered — searches titles, descriptions & notes</mat-hint>
-  </mat-form-field>
+           placeholder="AI search: 'budget discussions', 'John's tasks'...">
+    <div class="search-suffix">
+      @if (isSearching) {
+        <mat-spinner diameter="18"></mat-spinner>
+      } @else if (searchQuery) {
+        <button class="clear-btn" (click)="clearSearch()" title="Clear search">
+          <mat-icon>close</mat-icon>
+        </button>
+      } @else {
+        <div class="search-icon-btn">
+          <mat-icon>search</mat-icon>
+        </div>
+      }
+    </div>
+  </div>
 
   <mat-form-field appearance="outline" class="date-filter-field">
     <mat-label>Date range</mat-label>

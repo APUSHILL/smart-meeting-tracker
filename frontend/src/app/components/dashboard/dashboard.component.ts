@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { BaseChartDirective } from 'ng2-charts';
 import {
   Chart, ChartData, ChartOptions,
@@ -16,7 +17,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import { TaskService } from '../../services/task.service';
 import { Dashboard } from '../../models/dashboard.model';
 import { Task } from '../../models/task.model';
-
+import { TaskListDialogComponent, TaskListDialogData } from './task-list-dialog.component';
 Chart.register(
   BarController, BarElement, CategoryScale, LinearScale,
   PieController, ArcElement,
@@ -28,7 +29,7 @@ Chart.register(
   standalone: true,
   imports: [
     CommonModule, RouterLink,
-    MatCardModule, MatButtonModule, MatIconModule, MatDividerModule,
+    MatCardModule, MatButtonModule, MatIconModule, MatDividerModule, MatDialogModule,
     BaseChartDirective
   ],
   templateUrl: './dashboard.component.html',
@@ -41,22 +42,25 @@ export class DashboardComponent implements OnInit {
 
   barChartData: ChartData<'bar'> = {
     labels: ['Pending', 'Completed', 'Overdue'],
-    datasets: [{ data: [0, 0, 0], label: 'Tasks', backgroundColor: ['#3f51b5', '#4caf50', '#f44336'] }]
+    datasets: [{ data: [0, 0, 0], label: 'Tasks', backgroundColor: ['#6366f1', '#22c55e', '#ef4444'] }]
   };
   barChartOptions: ChartOptions<'bar'> = {
     responsive: true,
-    plugins: { legend: { display: false } }
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
   };
 
   pieChartData: ChartData<'pie'> = {
     labels: ['Pending', 'Completed'],
-    datasets: [{ data: [0, 0], backgroundColor: ['#ff9800', '#4caf50'] }]
+    datasets: [{ data: [0, 0], backgroundColor: ['#6366f1', '#22c55e'] }]
   };
   pieChartOptions: ChartOptions<'pie'> = { responsive: true };
 
   constructor(
     private dashboardService: DashboardService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +76,40 @@ export class DashboardComponent implements OnInit {
       };
     });
 
-    this.taskService.getToday().subscribe(tasks => this.todayTasks = tasks);
-    this.taskService.getOverdue().subscribe(tasks => this.overdueTasks = tasks);
+    this.taskService.getToday().subscribe({ next: t => this.todayTasks = t, error: () => {} });
+    this.taskService.getOverdue().subscribe({ next: t => this.overdueTasks = t, error: () => {} });
+  }
+
+  openPendingTasks(): void {
+    this.taskService.getByStatus('PENDING').subscribe({
+      next: tasks => this.openDialog({ title: 'Pending Tasks', icon: 'pending_actions', iconColor: '#d97706', tasks }),
+      error: () => this.openDialog({ title: 'Pending Tasks', icon: 'pending_actions', iconColor: '#d97706', tasks: [] })
+    });
+  }
+
+  openCompletedTasks(): void {
+    this.taskService.getByStatus('COMPLETED').subscribe({
+      next: tasks => this.openDialog({ title: 'Completed Tasks', icon: 'task_alt', iconColor: '#16a34a', tasks }),
+      error: () => this.openDialog({ title: 'Completed Tasks', icon: 'task_alt', iconColor: '#16a34a', tasks: [] })
+    });
+  }
+
+  openOverdueTasks(): void {
+    this.taskService.getOverdue().subscribe({
+      next: tasks => this.openDialog({ title: 'Overdue Tasks', icon: 'warning', iconColor: '#dc2626', tasks }),
+      error: () => this.openDialog({ title: 'Overdue Tasks', icon: 'warning', iconColor: '#dc2626', tasks: [] })
+    });
+  }
+
+  goToMeetings(): void {
+    this.router.navigate(['/meetings']);
+  }
+
+  private openDialog(data: TaskListDialogData): void {
+    this.dialog.open(TaskListDialogComponent, {
+      data,
+      width: '480px',
+      maxHeight: '90vh'
+    });
   }
 }

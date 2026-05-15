@@ -6,6 +6,8 @@ import com.meetingtracker.service.MeetingService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,29 +23,39 @@ public class MeetingController {
     }
 
     @PostMapping
-    public ResponseEntity<MeetingResponse> createMeeting(@Valid @RequestBody MeetingRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(meetingService.createMeeting(request));
+    public ResponseEntity<MeetingResponse> createMeeting(
+            @Valid @RequestBody MeetingRequest request,
+            @AuthenticationPrincipal UserDetails user) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(meetingService.createMeeting(request, user.getUsername()));
     }
 
     @GetMapping
-    public ResponseEntity<List<MeetingResponse>> getAllMeetings() {
-        return ResponseEntity.ok(meetingService.getAllMeetings());
+    public ResponseEntity<List<MeetingResponse>> getAllMeetings(
+            @AuthenticationPrincipal UserDetails user) {
+        return ResponseEntity.ok(meetingService.getAllMeetings(user.getUsername()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MeetingResponse> getMeetingById(@PathVariable Long id) {
-        return ResponseEntity.ok(meetingService.getMeetingById(id));
+    public ResponseEntity<MeetingResponse> getMeetingById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails user) {
+        return ResponseEntity.ok(meetingService.getMeetingById(id, user.getUsername()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MeetingResponse> updateMeeting(@PathVariable Long id,
-                                                          @Valid @RequestBody MeetingRequest request) {
-        return ResponseEntity.ok(meetingService.updateMeeting(id, request));
+    public ResponseEntity<MeetingResponse> updateMeeting(
+            @PathVariable Long id,
+            @Valid @RequestBody MeetingRequest request,
+            @AuthenticationPrincipal UserDetails user) {
+        return ResponseEntity.ok(meetingService.updateMeeting(id, request, user.getUsername()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMeeting(@PathVariable Long id) {
-        meetingService.deleteMeeting(id);
+    public ResponseEntity<Void> deleteMeeting(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails user) {
+        meetingService.deleteMeeting(id, user.getUsername());
         return ResponseEntity.noContent().build();
     }
 }

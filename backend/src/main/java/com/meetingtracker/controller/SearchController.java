@@ -4,6 +4,8 @@ import com.meetingtracker.dto.MeetingResponse;
 import com.meetingtracker.dto.SearchRequest;
 import com.meetingtracker.service.SearchService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +21,9 @@ public class SearchController {
     }
 
     @PostMapping
-    public ResponseEntity<List<MeetingResponse>> search(@RequestBody SearchRequest request) {
-        return ResponseEntity.ok(searchService.search(request.getQuery()));
+    public ResponseEntity<List<MeetingResponse>> search(
+            @RequestBody SearchRequest request,
+            @AuthenticationPrincipal UserDetails user) {
+        return ResponseEntity.ok(searchService.search(request.getQuery(), user.getUsername()));
     }
 }

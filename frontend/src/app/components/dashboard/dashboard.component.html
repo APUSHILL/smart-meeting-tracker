@@ -1,36 +1,47 @@
-<h1 class="page-title">Dashboard</h1>
+<!-- ── Page header box ── -->
+<div class="page-hero">
+  <div class="page-hero-icon"><mat-icon>dashboard</mat-icon></div>
+  <div>
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Your meeting workspace at a glance</p>
+  </div>
+</div>
 
 <div class="stats-grid">
-  <mat-card class="stat-card">
+  <mat-card class="stat-card clickable" (click)="goToMeetings()" title="View all meetings">
     <mat-card-content>
       <mat-icon color="primary">meeting_room</mat-icon>
       <div class="stat-number">{{ stats.totalMeetings }}</div>
       <div class="stat-label">Total Meetings</div>
     </mat-card-content>
+    <div class="card-click-hint"><mat-icon>arrow_forward</mat-icon></div>
   </mat-card>
 
-  <mat-card class="stat-card pending">
+  <mat-card class="stat-card pending clickable" (click)="openPendingTasks()" title="View pending tasks">
     <mat-card-content>
       <mat-icon>pending_actions</mat-icon>
       <div class="stat-number">{{ stats.pendingTasks }}</div>
       <div class="stat-label">Pending Tasks</div>
     </mat-card-content>
+    <div class="card-click-hint"><mat-icon>arrow_forward</mat-icon></div>
   </mat-card>
 
-  <mat-card class="stat-card completed">
+  <mat-card class="stat-card completed clickable" (click)="openCompletedTasks()" title="View completed tasks">
     <mat-card-content>
       <mat-icon>task_alt</mat-icon>
       <div class="stat-number">{{ stats.completedTasks }}</div>
       <div class="stat-label">Completed Tasks</div>
     </mat-card-content>
+    <div class="card-click-hint"><mat-icon>arrow_forward</mat-icon></div>
   </mat-card>
 
-  <mat-card class="stat-card overdue">
+  <mat-card class="stat-card overdue clickable" (click)="openOverdueTasks()" title="View overdue tasks">
     <mat-card-content>
       <mat-icon>warning</mat-icon>
       <div class="stat-number">{{ stats.overdueTasks }}</div>
       <div class="stat-label">Overdue Tasks</div>
     </mat-card-content>
+    <div class="card-click-hint"><mat-icon>arrow_forward</mat-icon></div>
   </mat-card>
 </div>
 

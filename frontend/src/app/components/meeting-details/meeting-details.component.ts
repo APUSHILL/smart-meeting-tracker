@@ -293,8 +293,55 @@ export class MeetingDetailsComponent implements OnInit {
     });
   }
 
-  analyzeWithAi(): void {
-    this.isAnalyzing = true;
+  addToCalendar(): void {
+    if (!this.meeting) return;
+    const m = this.meeting;
+
+    const start = m.meetingTime ? new Date(m.meetingTime) : new Date();
+    const end   = new Date(start.getTime() + 60 * 60 * 1000); // default 1 hour duration
+
+    const fmt = (d: Date) =>
+      d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+    const attendeeLines = (m.attendees ?? [])
+      .map(a => `ATTENDEE;CN=${a}:MAILTO:unknown@placeholder.com`)
+      .join('\r\n');
+
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Smart Meeting Tracker//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      `UID:meeting-${m.id}@smart-meeting-tracker`,
+      `DTSTAMP:${fmt(new Date())}`,
+      `DTSTART:${fmt(start)}`,
+      `DTEND:${fmt(end)}`,
+      `SUMMARY:${m.title}`,
+      m.description ? `DESCRIPTION:${m.description.replace(/\n/g, '\\n')}` : '',
+      attendeeLines,
+      'BEGIN:VALARM',
+      'TRIGGER:-PT30M',
+      'ACTION:DISPLAY',
+      'DESCRIPTION:Meeting reminder',
+      'END:VALARM',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].filter(l => l !== '').join('\r\n');
+
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `${m.title.replace(/\s+/g, '-')}.ics`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    this.snackBar.open('Calendar file downloaded — open it to add to your calendar', 'Close', { duration: 4000 });
+  }
+
+  analyzeWithAi(): void {    this.isAnalyzing = true;
     this.aiService.analyzeMeeting(this.meetingId).subscribe({
       next: analysis => {
         this.isAnalyzing = false;
