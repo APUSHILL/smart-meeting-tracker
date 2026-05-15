@@ -16,8 +16,6 @@ frontend/.angular/
 .vscode/
 *.class
 
-# application.properties uses ${VAR:default} syntax — safe to commit, no raw secrets
-
 # Local secrets — never commit
 .env
 
