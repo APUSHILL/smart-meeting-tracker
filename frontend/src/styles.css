@@ -1,0 +1,38 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+
+  /* Soft blue-grey background — easy on the eyes, not pure white */
+  background: #eef2f7;
+  color: #1e2a3a;
+}
+
+* { box-sizing: border-box; }
+
+/* Cards sit on the background with a warm white, subtle shadow */
+mat-card {
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(30, 42, 58, 0.08) !important;
+}
+
+mat-card:hover {
+  box-shadow: 0 4px 16px rgba(30, 42, 58, 0.13) !important;
+}
+
+/* Page titles */
+h1 {
+  color: #1e2a3a;
+  font-weight: 600;
+}
+
+h2 {
+  color: #2c3e55;
+}
+
+/* Scrollbar — subtle and modern */
+::-webkit-scrollbar { width: 7px; }
+::-webkit-scrollbar-track { background: #eef2f7; }
+::-webkit-scrollbar-thumb { background: #b0bec5; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #78909c; }

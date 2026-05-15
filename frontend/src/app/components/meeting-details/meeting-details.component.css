@@ -1,0 +1,141 @@
+.spinner-container { display: flex; justify-content: center; padding: 48px; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.section-header h2 { margin: 0; }
+
+.attendees-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.attendees-title-row { display: flex; align-items: center; gap: 6px; }
+.no-attendees { color: #aaa; font-size: 0.88rem; }
+.attendee-field { width: 100%; margin-top: 8px; }
+
+.header-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.header-info { flex: 1; }
+.header-row h1 { margin: 0; }
+.edit-btn { margin-left: auto; margin-top: 4px; }
+
+.subtitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666;
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+}
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.status-badge.upcoming { background: #e8f5e9; color: #2e7d32; }
+.status-badge.past     { background: #f5f5f5; color: #757575; }
+
+.inline-icon { font-size: 16px; width: 16px; height: 16px; vertical-align: middle; }
+
+.description-card { margin-bottom: 12px; background: #f5f5f5; }
+
+.attendees-card { margin-bottom: 24px; }
+.attendees-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.section-icon  { color: #666; font-size: 20px; width: 20px; height: 20px; }
+.attendees-label { font-weight: 500; color: #555; margin-right: 4px; }
+
+/* Edit form */
+.edit-card { margin-bottom: 24px; border-left: 4px solid #3f51b5; }
+.full-width { width: 100%; margin-bottom: 4px; }
+.datetime-row { display: flex; gap: 16px; }
+.date-field { flex: 2; }
+.time-field { flex: 1; }
+.edit-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+
+/* Content grid */
+.content-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 32px;
+  align-items: start;
+  margin-top: 24px;
+}
+h2 { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+
+.add-form-card { margin-bottom: 16px; }
+
+.task-add-form { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
+.flex-grow   { flex: 1; min-width: 140px; }
+.priority-field { width: 120px; }
+
+/* Task cards */
+.task-card {
+  margin-bottom: 8px;
+  border-left: 4px solid #e0e0e0;
+  transition: border-color 0.2s;
+}
+.task-card.overdue   { border-left-color: #f44336; background: #fff8f8; }
+.task-card.today     { border-left-color: #ff9800; background: #fffaf0; }
+.task-card.completed { opacity: 0.65; border-left-color: #4caf50; }
+
+.task-content { display: flex; justify-content: space-between; align-items: center; }
+.task-info    { display: flex; flex-direction: column; gap: 2px; }
+
+.task-title-row { display: flex; align-items: center; gap: 6px; }
+.task-title     { font-weight: 500; }
+.task-title.strikethrough { text-decoration: line-through; color: #999; }
+
+/* Priority dot */
+.priority-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.priority-dot.priority-high   { background: #f44336; }
+.priority-dot.priority-medium { background: #ff9800; }
+.priority-dot.priority-low    { background: #9e9e9e; }
+
+/* Priority badge */
+.priority-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+}
+.p-high   { background: #fde8e8; color: #c62828; }
+.p-medium { background: #fff3e0; color: #e65100; }
+.p-low    { background: #f5f5f5; color: #616161; }
+
+.deadline { color: #666; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; }
+.task-actions { display: flex; align-items: center; gap: 8px; }
+.completed-icon { font-size: 28px; width: 28px; height: 28px; }
+
+.badge { padding: 1px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+.overdue-badge { background: #f44336; color: white; }
+.today-badge   { background: #ff9800; color: white; }
+
+.note-card { margin-bottom: 8px; }
+.note-footer { display: flex; justify-content: space-between; align-items: center; color: #999; }
+
+.empty-msg { color: #999; font-style: italic; margin: 8px 0; }
+
+@media (max-width: 768px) {
+  .content-grid { grid-template-columns: 1fr; }
+  .datetime-row { flex-direction: column; }
+  .task-add-form { flex-direction: column; }
+  .priority-field, .date-field, .time-field { width: 100%; flex: unset; }
+}

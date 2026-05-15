@@ -1,0 +1,34 @@
+.container { max-width: 640px; margin: 0 auto; }
+
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.datetime-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.date-field { flex: 2; }
+.time-field { flex: 1; }
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+@media (max-width: 480px) {
+  .datetime-row { flex-direction: column; }
+  .date-field, .time-field { width: 100%; }
+}

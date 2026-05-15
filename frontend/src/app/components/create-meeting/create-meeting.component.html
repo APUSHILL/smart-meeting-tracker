@@ -1,0 +1,78 @@
+<div class="container">
+  <div class="header-row">
+    <a mat-icon-button routerLink="/meetings"><mat-icon>arrow_back</mat-icon></a>
+    <h1>Create Meeting</h1>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <!-- Title -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Meeting Title *</mat-label>
+          <mat-icon matPrefix>title</mat-icon>
+          <input matInput formControlName="title" placeholder="e.g. Q2 Planning">
+          <mat-error>{{ titleError }}</mat-error>
+        </mat-form-field>
+
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <mat-icon matPrefix>notes</mat-icon>
+          <textarea matInput formControlName="description" rows="3"
+                    maxlength="300"
+                    placeholder="What is this meeting about?"></textarea>
+          <mat-hint align="end">{{ form.get('description')?.value?.length || 0 }}/300</mat-hint>
+        </mat-form-field>
+
+        <!-- Date + Time row -->
+        <div class="datetime-row">
+          <mat-form-field appearance="outline" class="date-field">
+            <mat-label>Meeting Date</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="meetingDate">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="time-field">
+            <mat-label>Time</mat-label>
+            <mat-icon matPrefix>schedule</mat-icon>
+            <input matInput type="time" formControlName="meetingTime">
+          </mat-form-field>
+        </div>
+
+        <!-- Attendees chip input -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Attendees</mat-label>
+          <mat-icon matPrefix>group</mat-icon>
+          <mat-chip-grid #chipGrid>
+            @for (attendee of attendees; track attendee) {
+              <mat-chip-row (removed)="removeAttendee(attendee)">
+                {{ attendee }}
+                <button matChipRemove><mat-icon>cancel</mat-icon></button>
+              </mat-chip-row>
+            }
+          </mat-chip-grid>
+          <input #attendeeInput
+                 placeholder="Type name, press Enter or comma..."
+                 [matChipInputFor]="chipGrid"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 (matChipInputTokenEnd)="addAttendee($event.value)"
+                 (keydown)="onAttendeeInputKeydown($event)"
+                 (blur)="onAttendeeBlur($event)">
+          <mat-hint>Press Enter or comma after each name</mat-hint>
+        </mat-form-field>
+
+        <div class="actions">
+          <a mat-button routerLink="/meetings">Cancel</a>
+          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || saving">
+            <mat-icon>add</mat-icon>
+            @if (saving) { Saving... } @else { Create Meeting }
+          </button>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

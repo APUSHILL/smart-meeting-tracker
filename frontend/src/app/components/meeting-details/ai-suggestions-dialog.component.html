@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>
+  <mat-icon style="vertical-align: middle; margin-right: 8px; color: #7c4dff">auto_awesome</mat-icon>
+  AI Meeting Analysis
+</h2>
+
+<mat-dialog-content>
+  <p class="section-label">Summary</p>
+  <p class="summary-text">{{ data.analysis.summary }}</p>
+
+  @if (tasks.length > 0) {
+    <mat-divider style="margin: 16px 0"></mat-divider>
+    <p class="section-label">Suggested Tasks</p>
+    <p class="hint">Edit titles, set priority, then select the tasks you want to add:</p>
+
+    @for (task of tasks; track $index) {
+      <div class="task-row" [class.deselected]="!task.selected">
+        <mat-checkbox [(ngModel)]="task.selected" [ngModelOptions]="{standalone: true}" class="task-checkbox">
+        </mat-checkbox>
+
+        <mat-form-field appearance="outline" class="title-field">
+          <input matInput [(ngModel)]="task.title" [ngModelOptions]="{standalone: true}"
+                 placeholder="Task title" [disabled]="!task.selected">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="priority-field">
+          <mat-select [(ngModel)]="task.priority" [ngModelOptions]="{standalone: true}" [disabled]="!task.selected">
+            <mat-option value="HIGH">🔴 High</mat-option>
+            <mat-option value="MEDIUM">🟡 Medium</mat-option>
+            <mat-option value="LOW">⚪ Low</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    }
+  } @else {
+    <p class="hint">No task suggestions generated.</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="[]">Cancel</button>
+  @if (tasks.length > 0) {
+    <button mat-raised-button color="accent" (click)="addSelected()" [disabled]="adding">
+      <mat-icon>add_task</mat-icon>
+      {{ adding ? 'Adding...' : 'Add Selected Tasks' }}
+    </button>
+  }
+</mat-dialog-actions>

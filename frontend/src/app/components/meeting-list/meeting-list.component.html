@@ -1,0 +1,139 @@
+<div class="page-header">
+  <div>
+    <h1>Meetings</h1>
+    <p class="page-subtitle">Manage and track all your meetings</p>
+  </div>
+  <a mat-raised-button color="primary" routerLink="/meetings/new" class="new-btn">
+    <mat-icon>add</mat-icon> New Meeting
+  </a>
+</div>
+
+<!-- Search & Filter bar -->
+<div class="filter-bar">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search meetings</mat-label>
+    <mat-icon matPrefix>auto_awesome</mat-icon>
+    <input matInput [(ngModel)]="searchQuery"
+           (ngModelChange)="onSearchChange($event)"
+           placeholder="Ask anything: 'budget discussions', 'John's tasks'...">
+    @if (isSearching) {
+      <mat-spinner matSuffix diameter="18" style="margin-right:8px"></mat-spinner>
+    } @else if (searchQuery) {
+      <button matSuffix mat-icon-button (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+    <mat-hint>AI-powered — searches titles, descriptions & notes</mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="date-filter-field">
+    <mat-label>Date range</mat-label>
+    <mat-icon matPrefix>date_range</mat-icon>
+    <mat-select [(ngModel)]="dateFilter">
+      <mat-option value="all">All time</mat-option>
+      <mat-option value="this-week">This week</mat-option>
+      <mat-option value="this-month">This month</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (loading) {
+  <div class="spinner-container">
+    <mat-spinner diameter="48"></mat-spinner>
+  </div>
+}
+
+@if (!loading && allMeetings.length === 0) {
+  <div class="empty-state">
+    <mat-icon>event_busy</mat-icon>
+    <h3>No meetings yet</h3>
+    <p>Create your first meeting to get started</p>
+    <a mat-raised-button color="primary" routerLink="/meetings/new">Create Meeting</a>
+  </div>
+}
+
+@if (!loading && allMeetings.length > 0 && filteredMeetings.length === 0) {
+  <div class="empty-state">
+    <mat-icon>search_off</mat-icon>
+    <h3>No results found</h3>
+    <p>No meetings match your current filters</p>
+    <button mat-stroked-button (click)="clearSearch(); dateFilter = 'all'">Clear filters</button>
+  </div>
+}
+
+@if (!loading && filteredMeetings.length > 0) {
+  <p class="results-count">
+    @if (aiSearchResults !== null) {
+      <mat-icon style="font-size:14px;vertical-align:middle;color:#6366f1">auto_awesome</mat-icon>
+      AI found {{ filteredMeetings.length }} result{{ filteredMeetings.length === 1 ? '' : 's' }} for "{{ searchQuery }}"
+    } @else {
+      {{ filteredMeetings.length }} of {{ allMeetings.length }} meetings
+    }
+  </p>
+}
+
+<div class="meetings-grid">
+  @for (meeting of filteredMeetings; track meeting.id) {
+    <div class="meeting-card" [routerLink]="['/meetings', meeting.id]"
+         [class.upcoming]="isUpcoming(meeting)" [class.past]="!isUpcoming(meeting)">
+
+      <!-- Colored top bar -->
+      <div class="card-accent-bar"></div>
+
+      <div class="card-body">
+        <!-- Title row -->
+        <div class="card-title-row">
+          <h3 class="card-title">{{ meeting.title }}</h3>
+          <span class="status-pill" [class.upcoming]="isUpcoming(meeting)" [class.past]="!isUpcoming(meeting)">
+            {{ isUpcoming(meeting) ? 'Upcoming' : 'Past' }}
+          </span>
+        </div>
+
+        <!-- Date -->
+        <div class="card-date">
+          <mat-icon class="meta-icon">schedule</mat-icon>
+          <span>{{ meeting.meetingTime ? (meeting.meetingTime | date:'EEE, MMM d · h:mm a') : 'No date set' }}</span>
+        </div>
+
+        <!-- Description -->
+        @if (meeting.description) {
+          <p class="card-description">{{ meeting.description }}</p>
+        }
+
+        <!-- Attendees chips -->
+        @if (meeting.attendees && meeting.attendees.length > 0) {
+          <div class="attendees-row">
+            @for (a of meeting.attendees.slice(0, 3); track a) {
+              <span class="attendee-chip">{{ a }}</span>
+            }
+            @if (meeting.attendees.length > 3) {
+              <span class="attendee-chip more">+{{ meeting.attendees.length - 3 }}</span>
+            }
+          </div>
+        }
+
+        <!-- Stats + actions row -->
+        <div class="card-footer">
+          <div class="stats">
+            <span class="stat">
+              <mat-icon class="stat-icon">assignment</mat-icon>
+              {{ meeting.taskCount }} task{{ meeting.taskCount === 1 ? '' : 's' }}
+            </span>
+            <span class="stat">
+              <mat-icon class="stat-icon">notes</mat-icon>
+              {{ meeting.noteCount }} note{{ meeting.noteCount === 1 ? '' : 's' }}
+            </span>
+          </div>
+          <div class="card-actions" (click)="$event.stopPropagation()">
+            <a mat-icon-button color="primary" [routerLink]="['/meetings', meeting.id]" title="View details">
+              <mat-icon>arrow_forward</mat-icon>
+            </a>
+            <button mat-icon-button color="warn" (click)="deleteMeeting(meeting.id!, $event)" title="Delete">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,179 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.page-header h1 { margin: 0; font-size: 1.8rem; color: #1e2a3a; }
+.page-subtitle { margin: 4px 0 0; color: #888; font-size: 0.9rem; }
+.new-btn { height: 42px; }
+
+.filter-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.search-field { flex: 1; min-width: 200px; }
+.date-filter-field { width: 180px; }
+
+.results-count {
+  color: #aaa;
+  font-size: 0.82rem;
+  margin: 0 0 16px;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 24px;
+  text-align: center;
+  color: #aaa;
+}
+.empty-state mat-icon { font-size: 56px; width: 56px; height: 56px; margin-bottom: 16px; }
+.empty-state h3 { margin: 0 0 8px; color: #555; font-size: 1.1rem; }
+.empty-state p { margin: 0 0 20px; font-size: 0.9rem; }
+
+/* Grid */
+.meetings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+/* Card */
+.meeting-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(30,42,58,0.08);
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.15s;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.meeting-card:hover {
+  box-shadow: 0 8px 24px rgba(30,42,58,0.14);
+  transform: translateY(-3px);
+}
+
+/* Accent bar on top */
+.card-accent-bar {
+  height: 4px;
+  background: #cbd5e1;
+}
+.meeting-card.upcoming .card-accent-bar { background: linear-gradient(90deg, #6366f1, #818cf8); }
+.meeting-card.past .card-accent-bar { background: linear-gradient(90deg, #94a3b8, #cbd5e1); }
+
+.card-body { padding: 18px 20px 14px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+/* Title row */
+.card-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.card-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1e2a3a;
+  line-height: 1.4;
+  flex: 1;
+}
+
+/* Status pill */
+.status-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.status-pill.upcoming { background: #eef2ff; color: #6366f1; }
+.status-pill.past { background: #f1f5f9; color: #94a3b8; }
+
+/* Date */
+.card-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+.meta-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #94a3b8;
+}
+
+/* Description */
+.card-description {
+  margin: 0;
+  color: #718096;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Attendee chips */
+.attendees-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.attendee-chip {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.78rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+.attendee-chip.more {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+/* Footer */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+}
+.stats { display: flex; gap: 14px; }
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #94a3b8;
+  font-size: 0.82rem;
+}
+.stat-icon { font-size: 15px; width: 15px; height: 15px; }
+
+.card-actions { display: flex; gap: 2px; }
+
+@media (max-width: 480px) {
+  .filter-bar { flex-direction: column; }
+  .date-filter-field { width: 100%; }
+  .meetings-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,49 @@
+<div class="login-wrapper">
+  <mat-card class="login-card">
+    <div class="login-header">
+      <mat-icon class="logo-icon">event_note</mat-icon>
+      <h1>Smart Meeting Tracker</h1>
+      <p>{{ isRegisterMode ? 'Create your account' : 'Sign in to continue' }}</p>
+    </div>
+
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput formControlName="username" autocomplete="username">
+          <mat-error>Min 3 characters required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input matInput formControlName="password"
+                 [type]="hidePassword ? 'password' : 'text'"
+                 autocomplete="current-password">
+          <button matSuffix mat-icon-button type="button" (click)="hidePassword = !hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error>Min 6 characters required</mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" class="full-width submit-btn"
+                type="submit" [disabled]="form.invalid || loading">
+          @if (loading) {
+            <mat-spinner diameter="20" style="display:inline-block"></mat-spinner>
+          } @else {
+            <mat-icon>{{ isRegisterMode ? 'person_add' : 'login' }}</mat-icon>
+            {{ isRegisterMode ? 'Create Account' : 'Sign In' }}
+          }
+        </button>
+      </form>
+    </mat-card-content>
+
+    <div class="toggle-row">
+      {{ isRegisterMode ? 'Already have an account?' : "Don't have an account?" }}
+      <button mat-button color="primary" (click)="toggle()">
+        {{ isRegisterMode ? 'Sign In' : 'Register' }}
+      </button>
+    </div>
+  </mat-card>
+</div>

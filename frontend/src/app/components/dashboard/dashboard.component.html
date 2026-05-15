@@ -1,0 +1,89 @@
+<h1 class="page-title">Dashboard</h1>
+
+<div class="stats-grid">
+  <mat-card class="stat-card">
+    <mat-card-content>
+      <mat-icon color="primary">meeting_room</mat-icon>
+      <div class="stat-number">{{ stats.totalMeetings }}</div>
+      <div class="stat-label">Total Meetings</div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="stat-card pending">
+    <mat-card-content>
+      <mat-icon>pending_actions</mat-icon>
+      <div class="stat-number">{{ stats.pendingTasks }}</div>
+      <div class="stat-label">Pending Tasks</div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="stat-card completed">
+    <mat-card-content>
+      <mat-icon>task_alt</mat-icon>
+      <div class="stat-number">{{ stats.completedTasks }}</div>
+      <div class="stat-label">Completed Tasks</div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="stat-card overdue">
+    <mat-card-content>
+      <mat-icon>warning</mat-icon>
+      <div class="stat-number">{{ stats.overdueTasks }}</div>
+      <div class="stat-label">Overdue Tasks</div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div class="charts-grid">
+  <mat-card>
+    <mat-card-header><mat-card-title>Task Overview</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <canvas baseChart [data]="barChartData" [options]="barChartOptions" type="bar"></canvas>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header><mat-card-title>Task Distribution</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <canvas baseChart [data]="pieChartData" [options]="pieChartOptions" type="pie"></canvas>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div class="tasks-grid">
+  <mat-card>
+    <mat-card-header>
+      <mat-icon mat-card-avatar>today</mat-icon>
+      <mat-card-title>Today's Tasks</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (todayTasks.length === 0) {
+        <p class="empty-msg">No tasks due today.</p>
+      }
+      @for (task of todayTasks; track task.id) {
+        <div class="task-row today-task">
+          <span>{{ task.title }}</span>
+          <small>{{ task.meetingTitle }}</small>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-icon mat-card-avatar color="warn">warning</mat-icon>
+      <mat-card-title>Overdue Tasks</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (overdueTasks.length === 0) {
+        <p class="empty-msg">No overdue tasks.</p>
+      }
+      @for (task of overdueTasks; track task.id) {
+        <div class="task-row overdue-task">
+          <span>{{ task.title }}</span>
+          <small>Due: {{ task.deadline | date }}</small>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

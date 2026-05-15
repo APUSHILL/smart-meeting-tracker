@@ -1,0 +1,267 @@
+@if (loading) {
+  <div class="spinner-container"><mat-spinner diameter="48"></mat-spinner></div>
+}
+
+@if (!loading && meeting) {
+
+  <!-- ── VIEW MODE header ── -->
+  @if (!editMode) {
+    <div class="header-row">
+      <a mat-icon-button routerLink="/meetings"><mat-icon>arrow_back</mat-icon></a>
+      <div class="header-info">
+        <h1>{{ meeting.title }}</h1>
+        <p class="subtitle">
+          <mat-icon class="inline-icon">schedule</mat-icon>
+          {{ meeting.meetingTime ? (meeting.meetingTime | date:'medium') : 'No date set' }}
+          @if (meeting.meetingTime) {
+            <span class="status-badge" [class.upcoming]="isMeetingUpcoming()" [class.past]="!isMeetingUpcoming()">
+              {{ isMeetingUpcoming() ? 'Upcoming' : 'Past' }}
+            </span>
+          }
+        </p>
+      </div>
+      <button mat-stroked-button color="primary" class="edit-btn" (click)="enterEditMode()">
+        <mat-icon>edit</mat-icon> Edit
+      </button>
+    </div>
+
+    @if (meeting.description) {
+      <mat-card class="description-card">
+        <mat-card-content>{{ meeting.description }}</mat-card-content>
+      </mat-card>
+    }
+
+    <mat-card class="attendees-card">
+      <mat-card-content>
+        <div class="attendees-header">
+          <div class="attendees-title-row">
+            <mat-icon class="section-icon">group</mat-icon>
+            <span class="attendees-label">Attendees</span>
+          </div>
+          <button mat-icon-button (click)="toggleAttendeeEdit()" [title]="editingAttendees ? 'Done' : 'Edit attendees'">
+            <mat-icon>{{ editingAttendees ? 'check' : 'edit' }}</mat-icon>
+          </button>
+        </div>
+
+        @if (!editingAttendees) {
+          <div class="attendees-row">
+            @if (meeting.attendees && meeting.attendees.length > 0) {
+              @for (a of meeting.attendees; track a) {
+                <mat-chip>{{ a }}</mat-chip>
+              }
+            } @else {
+              <span class="no-attendees">No attendees yet</span>
+            }
+          </div>
+        } @else {
+          <mat-form-field appearance="outline" class="full-width attendee-field">
+            <mat-chip-grid #attendeeChipGrid>
+              @for (a of editableAttendees; track a) {
+                <mat-chip-row (removed)="removeAttendee(a)">
+                  {{ a }}<button matChipRemove><mat-icon>cancel</mat-icon></button>
+                </mat-chip-row>
+              }
+            </mat-chip-grid>
+            <input #attendeeInput placeholder="Add attendee, press Enter..."
+                   [matChipInputFor]="attendeeChipGrid"
+                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                   (matChipInputTokenEnd)="addAttendee($event.value); attendeeInput.value = ''">
+          </mat-form-field>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- ── EDIT MODE form ── -->
+  @if (editMode) {
+    <mat-card class="edit-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>edit</mat-icon>
+        <mat-card-title>Edit Meeting</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="editForm" (ngSubmit)="saveEdit()">
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Title *</mat-label>
+            <input matInput formControlName="title">
+            <mat-error>{{ editTitleError }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" rows="3" maxlength="300"></textarea>
+            <mat-hint align="end">{{ editForm.get('description')?.value?.length || 0 }}/300</mat-hint>
+          </mat-form-field>
+
+          <div class="datetime-row">
+            <mat-form-field appearance="outline" class="date-field">
+              <mat-label>Date</mat-label>
+              <input matInput [matDatepicker]="editPicker" formControlName="meetingDate">
+              <mat-datepicker-toggle matIconSuffix [for]="editPicker"></mat-datepicker-toggle>
+              <mat-datepicker #editPicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="time-field">
+              <mat-label>Time</mat-label>
+              <mat-icon matPrefix>schedule</mat-icon>
+              <input matInput type="time" formControlName="meetingTime">
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Attendees</mat-label>
+            <mat-icon matPrefix>group</mat-icon>
+            <mat-chip-grid #editChipGrid>
+              @for (a of editAttendees; track a) {
+                <mat-chip-row (removed)="removeEditAttendee(a)">
+                  {{ a }}<button matChipRemove><mat-icon>cancel</mat-icon></button>
+                </mat-chip-row>
+              }
+            </mat-chip-grid>
+            <input #editAttendeeInput placeholder="Add attendee..."
+                   [matChipInputFor]="editChipGrid"
+                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                   (matChipInputTokenEnd)="addEditAttendee($event.value)">
+          </mat-form-field>
+
+          <div class="edit-actions">
+            <button mat-button type="button" (click)="cancelEdit()">Cancel</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="editForm.invalid || saving">
+              <mat-icon>save</mat-icon> {{ saving ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- ── TASKS + NOTES grid ── -->
+  <div class="content-grid">
+
+    <section>
+      <h2><mat-icon>assignment</mat-icon> Tasks</h2>
+
+      <mat-card class="add-form-card">
+        <mat-card-content>
+          <form [formGroup]="taskForm" (ngSubmit)="addTask()" class="task-add-form">
+            <mat-form-field appearance="outline" class="flex-grow">
+              <mat-label>Task title</mat-label>
+              <input matInput formControlName="title" placeholder="What needs to be done?">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="date-field">
+              <mat-label>Deadline</mat-label>
+              <input matInput [matDatepicker]="taskPicker" formControlName="deadline">
+              <mat-datepicker-toggle matIconSuffix [for]="taskPicker"></mat-datepicker-toggle>
+              <mat-datepicker #taskPicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="priority-field">
+              <mat-label>Priority</mat-label>
+              <mat-select formControlName="priority">
+                <mat-option value="HIGH">🔴 High</mat-option>
+                <mat-option value="MEDIUM">🟡 Medium</mat-option>
+                <mat-option value="LOW">⚪ Low</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button mat-raised-button color="primary" type="submit"
+                    [disabled]="taskForm.invalid || addingTask">
+              <mat-icon>add</mat-icon>
+            </button>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      @if (tasks.length === 0) {
+        <p class="empty-msg">No tasks yet. Add one above.</p>
+      }
+
+      @for (task of tasks; track task.id) {
+        <mat-card class="task-card"
+                  [class.overdue]="isOverdue(task)"
+                  [class.today]="isToday(task) && !isOverdue(task)"
+                  [class.completed]="task.status === 'COMPLETED'">
+          <mat-card-content class="task-content">
+            <div class="task-info">
+              <div class="task-title-row">
+                <span class="priority-dot" [class]="'priority-' + (task.priority ?? 'MEDIUM') | lowercase"
+                      [title]="(task.priority ?? 'MEDIUM') + ' priority'"></span>
+                <span class="task-title" [class.strikethrough]="task.status === 'COMPLETED'">
+                  {{ task.title }}
+                </span>
+                <span class="priority-badge" [class]="'p-' + (task.priority ?? 'MEDIUM') | lowercase">
+                  {{ task.priority ?? 'MEDIUM' }}
+                </span>
+              </div>
+              @if (task.deadline) {
+                <small class="deadline">
+                  <mat-icon class="inline-icon">event</mat-icon>
+                  Due: {{ task.deadline | date:'mediumDate' }}
+                  @if (isOverdue(task)) { <span class="badge overdue-badge">OVERDUE</span> }
+                  @if (isToday(task) && !isOverdue(task)) { <span class="badge today-badge">TODAY</span> }
+                </small>
+              }
+            </div>
+            <div class="task-actions">
+              @if (task.status === 'PENDING') {
+                <button mat-icon-button color="primary" (click)="markComplete(task)" title="Mark complete">
+                  <mat-icon>check_circle_outline</mat-icon>
+                </button>
+              } @else {
+                <button mat-icon-button color="primary" (click)="markPending(task)" title="Undo complete">
+                  <mat-icon>undo</mat-icon>
+                </button>
+              }
+              <mat-chip [color]="task.status === 'COMPLETED' ? 'primary' : 'warn'" selected>
+                {{ task.status }}
+              </mat-chip>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </section>
+
+    <section>
+      <div class="section-header">
+        <h2><mat-icon>notes</mat-icon> Notes</h2>
+        <button mat-stroked-button color="accent" (click)="analyzeWithAi()" [disabled]="isAnalyzing">
+          <mat-icon>auto_awesome</mat-icon>
+          {{ isAnalyzing ? 'Analyzing...' : 'Summarize & Extract Tasks' }}
+        </button>
+      </div>
+
+      <mat-card class="add-form-card">
+        <mat-card-content>
+          <form [formGroup]="noteForm" (ngSubmit)="addNote()">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Add a note</mat-label>
+              <textarea matInput formControlName="content" rows="3"
+                        placeholder="Write your meeting note here..."></textarea>
+            </mat-form-field>
+            <button mat-raised-button color="accent" type="submit"
+                    [disabled]="noteForm.invalid || addingNote">
+              Add Note
+            </button>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      @if (notes.length === 0) {
+        <p class="empty-msg">No notes yet.</p>
+      }
+
+      @for (note of notes; track note.id) {
+        <mat-card class="note-card">
+          <mat-card-content>
+            <p>{{ note.content }}</p>
+            <div class="note-footer">
+              <small>{{ note.createdAt | date:'short' }}</small>
+              <button mat-icon-button color="warn" (click)="deleteNote(note.id!)">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </section>
+
+  </div>
+}
