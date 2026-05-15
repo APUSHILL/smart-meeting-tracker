@@ -5,12 +5,12 @@ services:
     container_name: meeting-tracker-db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: REDACTED_DB_PASSWORD
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: meeting_tracker_db
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pREDACTED_DB_PASSWORD"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -27,9 +27,9 @@ services:
     environment:
       DB_URL: jdbc:mysql://mysql:3306/meeting_tracker_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
       DB_USERNAME: root
-      DB_PASSWORD: REDACTED_DB_PASSWORD
-      JWT_SECRET: REDACTED_JWT_SECRET
-      GEMINI_API_KEY: REDACTED_GEMINI_KEY
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
     ports:
       - "8080:8080"
 
@@ -41,6 +41,8 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
+    environment:
+      BACKEND_URL: http://backend:8080
     ports:
       - "80:80"
 
