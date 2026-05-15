@@ -19,6 +19,9 @@ frontend/.angular/
 # Env / secrets
 backend/src/main/resources/application.properties
 
+# Claude Code
+CLAUDE.md
+
 # OS
 .DS_Store
 Thumbd.db
