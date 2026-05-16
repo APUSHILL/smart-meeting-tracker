@@ -150,7 +150,8 @@ export class MeetingDetailsComponent implements OnInit {
     if (meetingDate) {
       const d = new Date(meetingDate);
       if (meetingTime) { const [h, m] = meetingTime.split(':').map(Number); d.setHours(h, m, 0, 0); }
-      isoTime = d.toISOString();
+      const pad = (n: number) => String(n).padStart(2, '0');
+      isoTime = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
     }
     this.meetingService.update(this.meetingId, {
       title, description,

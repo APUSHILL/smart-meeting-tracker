@@ -95,7 +95,9 @@ export class CreateMeetingComponent {
     } else {
       d.setHours(0, 0, 0, 0);
     }
-    return d.toISOString();
+    // Send as local time string to avoid UTC shift (toISOString() would subtract IST offset)
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
   }
 
   onSubmit(): void {
